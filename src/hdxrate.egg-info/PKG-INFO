@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: hdxrate
+Version: 2.0.0
+Requires-Python: >=3.11
+Requires-Dist: numpy>=1.26
+Requires-Dist: scipy>=1.12
+Requires-Dist: jax>=0.4.25
+Requires-Dist: numpyro>=0.14
+Requires-Dist: molmass>=2024.1
+Requires-Dist: biopython>=1.83
+Requires-Dist: matplotlib>=3.7

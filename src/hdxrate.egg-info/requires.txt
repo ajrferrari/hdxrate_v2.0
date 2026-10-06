@@ -1,0 +1,7 @@
+numpy>=1.26
+scipy>=1.12
+jax>=0.4.25
+numpyro>=0.14
+molmass>=2024.1
+biopython>=1.83
+matplotlib>=3.7

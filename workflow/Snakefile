@@ -1,0 +1,64 @@
+"""
+HDX rate fitting workflow.
+
+Usage:
+    snakemake --cores 1 --configfile workflow/config.yaml          # local, sequential
+    snakemake --cores N --configfile workflow/config.yaml          # local, N proteins in parallel
+    snakemake --profile cluster --configfile workflow/config.yaml  # cluster
+
+Phase 1 (compute_correction): loads all protein CSVs, computes cross-pH ODR
+    backexchange correction (multi-pH) or cross-protein timepoint correction
+    (single-pH), saves to results/correction.pkl.
+
+Phase 2 (fit_protein): one job per protein, fully parallel — runs MCMC using
+    the pre-computed correction and saves HDXResult to results/{protein}.pkl.
+
+Phase 3 (aggregate_results): combines all per-protein results into
+    results/summary.csv.
+"""
+
+from pathlib import Path
+
+configfile: "workflow/config.yaml"
+
+DATA_DIR    = Path(config["data_dir"])
+RESULTS_DIR = Path(config["results_dir"])
+
+PROTEINS = [p.stem for p in sorted(DATA_DIR.glob("*.csv"))]
+
+if not PROTEINS:
+    raise WorkflowError(f"No CSV files found in {DATA_DIR}. Check data_dir in config.yaml.")
+
+
+rule all:
+    input:
+        RESULTS_DIR / "summary.csv",
+        expand(str(RESULTS_DIR / "{protein}.pkl"), protein=PROTEINS),
+
+
+rule compute_correction:
+    input:
+        csvs = expand(str(DATA_DIR / "{protein}.csv"), protein=PROTEINS),
+    output:
+        correction = RESULTS_DIR / "correction.pkl",
+    script:
+        "scripts/compute_correction.py"
+
+
+rule fit_protein:
+    input:
+        csv        = DATA_DIR / "{protein}.csv",
+        correction = RESULTS_DIR / "correction.pkl",
+    output:
+        result = RESULTS_DIR / "{protein}.pkl",
+    script:
+        "scripts/fit_protein.py"
+
+
+rule aggregate_results:
+    input:
+        results = expand(str(RESULTS_DIR / "{protein}.pkl"), protein=PROTEINS),
+    output:
+        summary = RESULTS_DIR / "summary.csv",
+    script:
+        "scripts/aggregate.py"

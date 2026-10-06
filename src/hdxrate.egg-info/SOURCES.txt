@@ -1,0 +1,7 @@
+pyproject.toml
+src/hdxrate/__init__.py
+src/hdxrate.egg-info/PKG-INFO
+src/hdxrate.egg-info/SOURCES.txt
+src/hdxrate.egg-info/dependency_links.txt
+src/hdxrate.egg-info/requires.txt
+src/hdxrate.egg-info/top_level.txt

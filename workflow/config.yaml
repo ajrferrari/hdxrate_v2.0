@@ -1,0 +1,30 @@
+# HDX rate fitting workflow configuration
+# Place one {protein_id}.csv file per protein in data_dir.
+
+# --- Input / Output ---
+data_dir: data/       # directory containing {protein_id}.csv files
+results_dir: results/ # per-protein .pkl files and summary.csv land here
+
+# --- Experiment conditions (constant across all proteins) ---
+d2o_fraction: 0.90
+d2o_purity: 0.95
+temperature: 293.0    # Kelvin
+
+# --- Reference pH (null = auto-select pH closest to 6.0) ---
+reference_pH: null
+
+# --- Free energy ---
+compute_free_energies: true
+min_fe_val: -2.0
+
+# --- Saturation detection ---
+min_timepoints_saturation: 5   # minimum timepoints per pH before saturation can be declared
+mass_saturation_threshold: 1.0 # max centroid shift (Da) to declare saturation
+
+# --- MCMC ---
+num_chains: 4
+num_warmup: 500
+num_samples: 1000
+rng_seed: 42
+max_reruns: 3
+rmse_tolerance: 0.01
